@@ -1,0 +1,195 @@
+import numpy as np
+import random
+import matplotlib.pyplot as plt
+import timeit
+import sys
+
+sys.setrecursionlimit(10000)
+
+rng = np.random.default_rng()
+random_ints_negpos = rng.integers(-10, 10, size=100)
+random_ints = rng.integers(0, 10000, size=1000)
+
+
+def get_min_max(numbers: list[int]) -> tuple[int]:
+    """Find the minimum and maximum value in a list of numbers.
+    Args:
+        numbers (list[int]): A list of numbers.
+    Returns:
+        tuple[int]: A tuple containing the minimum and maximum value.
+    """
+    min = numbers[0]
+    max = numbers[0]
+    for number in numbers:
+        if number < min:
+            min = number
+        if number > max:
+            max = number
+    return (min, max)
+
+
+def custom_min_max(numbers: list[int]) -> tuple[int]:
+    """Find the minimum and maximum value in a list of numbers.
+    Args:
+        numbers (list[int]): A list of numbers.
+    Returns:
+        tuple[int]: A tuple containing the minimum and maximum value.
+    """
+    return (-10, 10)
+
+
+def fibonacci(n: int) -> int:
+    """Calculate the n-th Fibonacci number.
+    Args:
+        n (int): The index of the Fibonacci number.
+    Returns:
+        int: The n-th Fibonacci number.
+    """
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+
+def is_prime(number: int) -> bool:
+    """Check if a number is prime. Edge case: 0 and 1 are not prime.
+    Args:
+        number (int): The number to test.
+    Returns:
+        bool: True if the number is prime, False otherwise.
+    """
+    if number < 2:
+        return False
+    for i in range(2, number):
+        if number % i == 0:
+            return False
+    return True
+
+
+def n_primes(n: int) -> list[int]:
+    """Calculate the first n prime numbers.
+    Args:
+        n (int): The number of prime numbers to calculate.
+    Returns:
+        list[int]: A list of the first n prime numbers.
+    """
+    primes = []
+    i = 2
+    while len(primes) < n:
+        if is_prime(i):
+            primes.append(i)
+        i += 1
+    return primes
+
+
+def quick_sort(numbers: list[int]) -> list[int]:
+    """Sort a list of numbers using the quick sort algorithm.
+    Args:
+        numbers (list[int]): A list of numbers.
+    Returns:
+        list[int]: A sorted list of numbers.
+    """
+    if len(numbers) < 2:
+        return numbers
+    else:
+        pivot = numbers[0]
+        less = [i for i in numbers[1:] if i <= pivot]
+        greater = [i for i in numbers[1:] if i > pivot]
+        return quick_sort(less) + [pivot] + quick_sort(greater)
+
+
+def quick_sort_numpy(numbers: np.array) -> np.array:
+    if numbers.size < 2:
+        return numbers
+    else:
+        pivot_idx = np.random.choice(numbers.size)
+        pivot = numbers[pivot_idx]
+        return np.concatenate(
+            (
+            quick_sort_numpy(numbers[numbers < pivot]),
+            numbers[numbers == pivot], 
+            quick_sort_numpy(numbers[numbers > pivot])
+            ))
+
+
+def test_quicksort():
+    """
+    Test the quicksort algorithm.
+    """
+    numbers = [random.randint(-100, 100) for i in range(1, 10000)]
+    sorted_numbers = quick_sort(numbers)
+    assert sorted_numbers == sorted(numbers), "Quicksort failed!"
+    print("Quicksort test passed!")
+
+
+def guess_number():
+    """
+    Guess a random number and beat the randomness.
+    """
+    number = random.randint(1, 100)
+    guess = 0
+    while guess != number:
+        guess = int(input("Rate eine Zahl: "))
+        if guess < number:
+            print("Kaaaalt! (Zu niedrig!)")
+        elif guess > number:
+            print("Kaaalt. (Zu hoch!)")
+    print("Richtig! Toll! Du hast den Zufall geschlagen, die Nummer war: " + str(number) + "!")
+    
+
+if __name__ == "__main__":
+    # quick_sort_numpy(random_ints_negpos)
+    
+    
+    # # quick sort without numpy
+    time_python = timeit.timeit("quick_sort(random_ints)", setup="from __main__ import quick_sort, random_ints", number=10)
+    time_numpy = timeit.timeit("quick_sort_numpy(random_ints)", setup="from __main__ import quick_sort_numpy, random_ints", number=10)
+    print(f"Numpy was {time_python/time_numpy} times faster than Python!")
+    
+    
+    
+    
+    # # Hello World
+    # print("hello dlo-world!")
+    # print()
+    
+    # # Loop and print numbers
+    # print(list(range(1,101)))
+    # print()
+    
+    # # 100 random numbers between -10 and 10
+    # random_numbers = [random.randint(-10,10) for i in range(1,101)]
+
+    # # 100 random points
+    # random_points = [(random.randint(-10,10), random.randint(-10,10)) for i in range(1,101)]
+    
+    # # plot random points
+    # plt.scatter(*zip(*random_points))
+    # plt.title("Random Points")
+    # plt.show()
+    
+    # # print the min and max of the random numbers
+    # print(get_min_max(random_numbers))
+    # time_1 = timeit.timeit("get_min_max(random_numbers)", setup="from __main__ import get_min_max, random_numbers", number=1000)
+
+    # # print the min and max of the random numbers in constant time
+    # print(custom_min_max(random_numbers))
+    # time_2 = timeit.timeit("custom_min_max(random_numbers)", setup="from __main__ import custom_min_max, random_numbers", number=1000)
+    # print(f"Oh look: My constant time implementation was {time_1/time_2} times faster!")
+    # print()
+    
+    # # print the first 10 prime numbers
+    # print(n_primes(10))
+    # print()
+    
+    # # print the first 10 fibonacci numbers
+    # print([fibonacci(i) for i in range(1,11)])
+    
+    # # test the quicksort algorithm
+    # test_quicksort()
+    
+    # # play a game of guess the number
+    # guess_number()
+    
